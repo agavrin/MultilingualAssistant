@@ -8,6 +8,7 @@ const bent = require('bent')
 app.get('/balance', (req, res) => {
 	res.json({
 		amount: 500,
+		MYURL: process.env.MYURL
 	});
 });
 
@@ -88,7 +89,7 @@ function main(params) {
 	}
 }
 
-// process.env.PORT
-app.listen(8080);
+var port=process.env.PORT || "8080";
+app.listen(port);
 
-console.log('Server running at http://0.0.0.0:8080/');
+console.log('Server running at http://0.0.0.0:'+port+'/');
