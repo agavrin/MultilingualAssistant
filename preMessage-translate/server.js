@@ -1,5 +1,5 @@
 const http = require('http');
-var dumper = require('dumper').dumper;
+//var dumper = require('dumper').dumper;
 //const rp = require("request-promise");
 var _ = require('lodash');
 const express = require('express');
