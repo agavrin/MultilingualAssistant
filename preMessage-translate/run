@@ -26,13 +26,13 @@ ibmcloud ce app create -n preMessage-translate --image ${REGISTRY}/preMessage-tr
 URL=$(ibmcloud ce app get -n preMessage-translate -o url)
 
 # Now call it
-#curl -fs $URL | tee out
-#[[ "${PIPESTATUS[0]}" == "0" ]]
+curl -fs $URL | tee out
+[[ "${PIPESTATUS[0]}" == "0" ]]
 
-#if ! [[ "$(cat out)" == "Hello World" ]]; then
-#  echo "Unexpected output"
-#  exit 1
-#fi
+if ! [[ "$(cat out)" == "OK" ]]; then
+  echo "Unexpected output"
+  exit 1
+fi
 
 # Clean up
 clean
