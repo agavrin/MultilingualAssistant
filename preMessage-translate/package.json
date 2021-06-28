@@ -1,18 +1,19 @@
 {
-  "name": "premessage-translate",
-  "version": "1.0.0",
-  "description": "premessage-translate",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "bent": "^7.3.12",
-    "express": "^4.17.1",
-    "http": "*",
-    "lodash": "^4.17.21"
-  }
+	"name": "premessage-translate",
+	"version": "1.0.0",
+	"description": "premessage-translate",
+	"main": "server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node server.js"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"bent": "^7.3.12",
+		"express": "^4.17.1",
+		"http": "*",
+		"ibm-watson": "^6.1.1",
+		"lodash": "^4.17.21"
+	}
 }
