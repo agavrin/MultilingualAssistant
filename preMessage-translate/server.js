@@ -10,6 +10,12 @@ app.get('/balance', (req, res) => {
 	});
 });
 
+app.get('/health', (req, res) => {
+	res.json({
+		status: "OK",
+	});
+});
+
 function main(params) {
 	if (params.payload.input.text !== "") {
 
