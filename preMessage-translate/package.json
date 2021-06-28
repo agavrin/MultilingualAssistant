@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bent": "^7.3.12",
     "express": "^4.17.1",
     "http": "*",
-    "lodash": "^4.17.21",
-    "request-promise": "^4.2.6"
+    "lodash": "^4.17.21"
   }
 }

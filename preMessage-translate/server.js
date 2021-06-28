@@ -1,8 +1,9 @@
 const http = require('http');
-const rp = require("request-promise");
+//const rp = require("request-promise");
 var _ = require('lodash');
 const express = require('express');
 const app = express();
+const bent = require('bent')
 
 app.get('/balance', (req, res) => {
 	res.json({

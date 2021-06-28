@@ -1,5 +1,6 @@
 FROM node:12-alpine
-RUN npm install
 COPY server.js .
+COPY package.json .
+RUN npm install
 EXPOSE 8080
 CMD [ "node", "server.js" ]
