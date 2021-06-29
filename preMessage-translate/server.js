@@ -123,19 +123,30 @@ app.post('/postmessage', (req, res) => {
 
 
 app.get('/health', (req, res) => {
-	var error = "";
-	if (WATSON_LANGUAGE_TRANSLATOR_URL == UNKNOWN) error = "Provide WATSON_LANGUAGE_TRANSLATOR_URL environmental variable"
-	if (WATSON_LANGUAGE_TRANSLATOR_APIKEY == UNKNOWN) error = "Provide WATSON_LANGUAGE_TRANSLATOR_APIKEY environmental variable"
+	var myError = "";
+	if (WATSON_LANGUAGE_TRANSLATOR_URL == UNKNOWN) myError = "Provide WATSON_LANGUAGE_TRANSLATOR_URL environmental variable"
+	if (WATSON_LANGUAGE_TRANSLATOR_APIKEY == UNKNOWN) myError = "Provide WATSON_LANGUAGE_TRANSLATOR_APIKEY environmental variable"
 
-	if (error == "")
-		res.json({
-			status: "OK",
+	const translateParams = {
+		text: "Привет",
+		modelId: "ru-en"
+	};
+
+	languageTranslator.translate(translateParams)
+		.then(translationResult => {
+			res.json({
+				status: "OK",
+				translatedText: translationResult.result.translations[0].translation
+			});
+		})
+		.catch(err => {
+			res.json({
+				status: "FAILED",
+				enverror: myError,
+				error: err
+			});
 		});
-	else
-		res.json({
-			status: "FAILED",
-			error: error
-		});
+
 
 });
 
