@@ -13,7 +13,7 @@ set -ex
 export REGISTRY=${REGISTRY:-ibmcom}
 
 # Build the image
-docker build ${NOCACHE} -t ${REGISTRY}/preMessage-translate .
+docker build ${NOCACHE} -t ${REGISTRY}/WA-webhooks .
 
 # And push it
-docker push ${REGISTRY}/preMessage-translate
+docker push ${REGISTRY}/WA-webhooks

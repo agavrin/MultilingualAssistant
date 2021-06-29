@@ -1,11 +1,37 @@
 # README
 
-
 This repo showcases how to create a multilingual assistant using pre and post message webhooks.
 
 These samples were originally built using IBM Cloud Functions
 
 We initially designed it to run language identification and pre-message translation as a sequence of two cloud functions in a row, and the identified language is saved as a context variable and is reused in the post-message translation as well.
+
+## IBM Code engine example
+
+You can use IBM Code Engine to roll out the service with a set of three webhooks.
+
+### Endpoints:
+
+- **/premessage-identify**
+
+	Identify language of incoming message, and store it in "language" context variable.
+
+- **/premessage-identifytranslate**
+
+	Identify language of incoming message, and translate it to English (by default). Store the language in "language" context variable.
+
+- **/postmessage-translate**
+
+	Translate outgoing message to the language of the original request
+
+All webhooks require two environmental variables to be available:
+`WATSON_LANGUAGE_TRANSLATOR_URL`
+`WATSON_LANGUAGE_TRANSLATOR_APIKEY`
+
+These variable define connection to IBM Watson Language Translator service, which is used for the translation.
+
+
+## IBM Cloud functions example
 
 We have two samples now:
 
@@ -30,7 +56,7 @@ We also have two methods to respond:
    These scripts only support simple text responses. To update for disambiguation suggestions, options, etc., you will need to simply update the objects that get examined and translated. Instead of output.generic.text you would look for output.generic.suggestions and output.generic.options
    There is no easy way to translate context variables at runtime when using the database option to hand-write translations. If context variables are needed in your response, we suggest using the automatic translations
    There is some nuance with slot collection and knowing which response to look up, as a slot requires the overall dialog node, handler, and slot IDs, so knowing which response to lookup has some complexity. We suggest relying on automatic translation for this as well.
-    
+
 **Troubleshooting:**
 
    During the execution or test of your multilingual chatbot, it is good to have these tips if you are stuck:
@@ -44,4 +70,3 @@ We also have two methods to respond:
    - if the input of the user is only one word or a short sentence, the confidence of the translator service is going to be low in most cases, so be aware to handle logic in your cloud function to retain the best identified language recognized in the past utterances.
    - if you use a cloud function sequence, make sure that the last cloud function is returning with the JSON format:   return { body: params }
    - The post-webhook code doesn't handle slots, but you can improve the code to support it. Right now if the answer unit is not found, the post webhook is going to translate the output from the watson assistant dialog to the user using the last identified language, just like pattern 1.
-

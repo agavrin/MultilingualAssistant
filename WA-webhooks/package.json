@@ -1,7 +1,7 @@
 {
-	"name": "premessage-translate",
+	"name": "WA-webhooks",
 	"version": "1.0.0",
-	"description": "premessage-translate",
+	"description": "webhooks examples for multilingual WA",
 	"main": "server.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",

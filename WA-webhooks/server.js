@@ -1,6 +1,4 @@
 const http = require('http');
-//var dumper = require('dumper').dumper;
-//const rp = require("request-promise");
 var _ = require('lodash');
 const express = require('express');
 const app = express();
@@ -15,7 +13,7 @@ const UNKNOWN = "unknown";
 var WATSON_LANGUAGE_TRANSLATOR_URL = process.env.WATSON_LANGUAGE_TRANSLATOR_URL || UNKNOWN;
 var WATSON_LANGUAGE_TRANSLATOR_APIKEY = process.env.WATSON_LANGUAGE_TRANSLATOR_APIKEY || UNKNOWN;
 
-/**
+/*
  * Instantiate the Watson Language Translator Service
  */
 
@@ -28,12 +26,12 @@ const languageTranslator = new LanguageTranslatorV3({
 	})
 });
 
+// All incoming objects are treated as JSON
 app.use(express.json());
 
+// premessage - identify only
 
-// Pre-message webhook
-
-app.post('/premessage', (req, res) => {
+app.post('/premessage-identify', (req, res) => {
 	// dumper(req.body);
 	var inputMessage = req.body;
 	const identifyParams = {
@@ -48,9 +46,43 @@ app.post('/premessage', (req, res) => {
 
 			let firstLanguageIdentified = identifiedLanguages.result.languages[0];
 			const language = firstLanguageIdentified.confidence > 0.5 ? firstLanguageIdentified.language : DEFAULT_DIALOG_LANGUAGE_CODE;
-			console.log("PREMESSAGE: Text: "+inputMessage.payload.input.text);
-			console.log("PREMESSAGE: Language of the request identified: " + firstLanguageIdentified.language + " ("+firstLanguageIdentified.confidence+")");
-			console.log("PREMESSAGE: Language used: "+language);
+			console.log("PREMESSAGE: Text: " + inputMessage.payload.input.text);
+			console.log("PREMESSAGE: Language of the request identified: " + firstLanguageIdentified.language + " (" + firstLanguageIdentified.confidence + ")");
+			console.log("PREMESSAGE: Language used: " + language);
+
+			if (language !== DEFAULT_DIALOG_LANGUAGE_CODE) {
+				inputMessage.payload.context.skills["main skill"].user_defined["language"] = language;
+				res.json(inputMessage);
+			} else res.json(inputMessage);
+
+		})
+		.catch(err => {
+			console.log('error:', err);
+			res.json(inputMessage);
+		});
+
+});
+
+// Pre-message webhook
+
+app.post('/premessage-identifytranslate', (req, res) => {
+	// dumper(req.body);
+	var inputMessage = req.body;
+	const identifyParams = {
+		text: inputMessage.payload.input.text
+	};
+
+	// By default - no translation
+	inputMessage.payload.context.skills["main skill"].user_defined["language"] = "none";
+	// Identify language of the request
+	languageTranslator.identify(identifyParams)
+		.then(identifiedLanguages => {
+
+			let firstLanguageIdentified = identifiedLanguages.result.languages[0];
+			const language = firstLanguageIdentified.confidence > 0.5 ? firstLanguageIdentified.language : DEFAULT_DIALOG_LANGUAGE_CODE;
+			console.log("PREMESSAGE: Text: " + inputMessage.payload.input.text);
+			console.log("PREMESSAGE: Language of the request identified: " + firstLanguageIdentified.language + " (" + firstLanguageIdentified.confidence + ")");
+			console.log("PREMESSAGE: Language used: " + language);
 
 			if (language !== DEFAULT_DIALOG_LANGUAGE_CODE) {
 				// Need to translate
@@ -58,7 +90,7 @@ app.post('/premessage', (req, res) => {
 					text: inputMessage.payload.input.text,
 					modelId: firstLanguageIdentified.language + '-' + DEFAULT_DIALOG_LANGUAGE_CODE,
 				};
-				console.log("PREMESSAGE: Translation: "+firstLanguageIdentified.language + ' -> ' + DEFAULT_DIALOG_LANGUAGE_CODE);
+				console.log("PREMESSAGE: Translation: " + firstLanguageIdentified.language + ' -> ' + DEFAULT_DIALOG_LANGUAGE_CODE);
 				languageTranslator.translate(translateParams)
 					.then(translationResult => {
 						// Save the original input
@@ -85,12 +117,13 @@ app.post('/premessage', (req, res) => {
 
 });
 
+// postmessage - translate
 
-app.post('/postmessage', (req, res) => {
+app.post('/postmessage-translate', (req, res) => {
 	// dumper(req.body);
 	var outputMessage = req.body;
 	var language = outputMessage.payload.context.skills["main skill"].user_defined["language"];
-	console.log("POSTMESSAGE: Text: "+outputMessage.payload.output.generic[0].text);
+	console.log("POSTMESSAGE: Text: " + outputMessage.payload.output.generic[0].text);
 	if (language == "none" || language == DEFAULT_DIALOG_LANGUAGE_CODE) {
 		console.log("POSTMESSAGE: Language = " + language + ". No Translation.");
 		res.json(outputMessage);
@@ -118,8 +151,6 @@ app.post('/postmessage', (req, res) => {
 
 
 });
-
-
 
 
 app.get('/health', (req, res) => {

@@ -8,7 +8,7 @@ function clean() {
   set +ex
   echo Cleaning...
   (
-  ibmcloud ce app delete -n preMessage-translate -f
+  ibmcloud ce app delete -n WA-webhooks -f
   rm -f out
   ) > /dev/null 2>&1
 }
@@ -20,10 +20,10 @@ set -ex
 export REGISTRY=${REGISTRY:-ibmcom}
 
 # Create the app
-ibmcloud ce app create -n preMessage-translate --image ${REGISTRY}/preMessage-translate
+ibmcloud ce app create -n WA-webhooks --image ${REGISTRY}/WA-webhooks
 
 # Get the URL of the app for later use
-URL=$(ibmcloud ce app get -n preMessage-translate -o url)
+URL=$(ibmcloud ce app get -n WA-webhooks -o url)
 
 # Now call it
 curl -fs $URL | tee out
